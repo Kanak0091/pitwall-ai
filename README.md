@@ -95,6 +95,8 @@ source ~/.venvs/pitwall/bin/activate
 pip install -r requirements.txt
 pytest -v
 streamlit run app.py
+# Or launch the ultra-fast FastAPI + HTML5 Canvas UI (90+ Lighthouse Performance):
+uvicorn web_app:app --host 0.0.0.0 --port 8000
 ```
 
 ### Windows (PowerShell)
@@ -106,6 +108,8 @@ python -m venv .venv
 pip install -r requirements.txt
 pytest -v
 streamlit run app.py
+# Or launch the ultra-fast FastAPI + HTML5 Canvas UI (90+ Lighthouse Performance):
+uvicorn web_app:app --host 0.0.0.0 --port 8000
 ```
 
 ---
