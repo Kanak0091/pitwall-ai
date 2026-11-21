@@ -82,14 +82,30 @@ pitwall-ai/
 
 ## 🚀 Installation & Quickstart
 
+### Linux / macOS / WSL
 ```bash
-git clone https://github.com/Kanak0091/pitwall-ai.git
+git clone [https://github.com/Kanak0091/pitwall-ai.git](https://github.com/Kanak0091/pitwall-ai.git)
 cd pitwall-ai
-python3 -m venv .venv
-source .venv/bin/activate
+
+# Create and activate a virtual environment
+python3 -m venv ~/.venvs/pitwall
+source ~/.venvs/pitwall/bin/activate
+
+# Install dependencies, run tests, and launch the dashboard
 pip install -r requirements.txt
-streamlit run app.py
 pytest -v
+streamlit run app.py
+```
+
+### Windows (PowerShell)
+```powershell
+git clone [https://github.com/Kanak0091/pitwall-ai.git](https://github.com/Kanak0091/pitwall-ai.git)
+cd pitwall-ai
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pytest -v
+streamlit run app.py
 ```
 
 ---
