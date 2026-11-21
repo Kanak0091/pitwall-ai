@@ -7,7 +7,6 @@ Run with:
 
 import numpy as np
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -23,7 +22,7 @@ st.set_page_config(
     page_title="PitWall AI | F1 Race Strategy Simulator",
     page_icon="🏎️",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="collapsed",
 )
 
 # --- F1 Pit-Wall Telemetry Color Palette ---
@@ -41,13 +40,14 @@ COMPOUND_COLORS = {
     "WET": "#0A84FF",
 }
 
+PLOTLY_CONFIG = {"displayModeBar": False, "responsive": True}
+
 
 def inject_custom_css() -> None:
     """Apply responsive F1 telemetry styling and auto-wrapping KPI cards."""
     st.markdown(
         f"""
         <style>
-        /* Responsive container padding */
         .block-container {{
             padding-top: 1.5rem;
             padding-bottom: 2.5rem;
@@ -55,14 +55,10 @@ def inject_custom_css() -> None:
             padding-right: clamp(1rem, 3vw, 2.5rem);
             max-width: 1440px;
         }}
-
-        /* Sidebar styling */
         section[data-testid="stSidebar"] {{
             background-color: {BG_CARD};
             border-right: 1px solid {BORDER_SUBTLE};
         }}
-
-        /* Header Banner */
         .pitwall-banner {{
             background: linear-gradient(135deg, #161B26 0%, #10141D 100%);
             border: 1px solid {BORDER_SUBTLE};
@@ -86,8 +82,6 @@ def inject_custom_css() -> None:
             margin-bottom: 0;
             line-height: 1.45;
         }}
-
-        /* Responsive Auto-Fit Grid for KPI Cards (prevents narrow squishing) */
         .kpi-grid {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -107,7 +101,6 @@ def inject_custom_css() -> None:
         .kpi-card.accent-gold {{ border-top: 3px solid #FFD60A; }}
         .kpi-card.accent-cyan {{ border-top: 3px solid #38BDF8; }}
         .kpi-card.accent-green {{ border-top: 3px solid #32D74B; }}
-
         .kpi-label {{
             font-size: 0.76rem;
             text-transform: uppercase;
@@ -127,12 +120,6 @@ def inject_custom_css() -> None:
             font-size: 0.8rem;
             color: {TEXT_MUTED};
             margin-top: 0.35rem;
-        }}
-
-        /* Section spacing */
-        .section-spacer {{
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
         }}
         hr {{
             border-color: {BORDER_SUBTLE};
@@ -181,7 +168,7 @@ def run_cached_optimization(
     sc_prob: float,
     forced_sc_lap: int | None,
 ):
-    """Cache tyre model fitting, simulation, and strategy optimization for fast UI responsiveness."""
+    """Cache tyre model fitting, simulation, and strategy optimization."""
     laps_df = get_cleaned_laps(year, grand_prix, use_offline)
     tyre_model = TyreDegradationModel(model_type=model_type).fit(laps_df)
 
@@ -231,7 +218,7 @@ def format_race_time(seconds: float) -> str:
 
 
 def style_plotly_figure(fig: go.Figure, title: str, x_title: str, y_title: str) -> go.Figure:
-    """Apply consistent PitWall dark telemetry styling and clean margins to Plotly charts."""
+    """Apply consistent PitWall dark telemetry styling and clean margins."""
     fig.update_layout(
         title=dict(text=title, font=dict(size=14, color="#F8FAFC"), x=0.02, y=0.95),
         xaxis_title=x_title,
@@ -239,8 +226,8 @@ def style_plotly_figure(fig: go.Figure, title: str, x_title: str, y_title: str) 
         paper_bgcolor=BG_CARD,
         plot_bgcolor="#0E121B",
         font=dict(color="#CBD5E1", size=12),
-        height=370,
-        margin=dict(l=50, r=20, t=65, b=48),
+        height=350,
+        margin=dict(l=50, r=20, t=60, b=45),
         xaxis=dict(gridcolor="#1E2533", zerolinecolor="#1E2533"),
         yaxis=dict(gridcolor="#1E2533", zerolinecolor="#1E2533"),
         legend=dict(
@@ -295,7 +282,7 @@ def plot_lap_time_trace(lap_df: pd.DataFrame, strategy_name: str) -> go.Figure:
                 y=group["LapTime_s"],
                 mode="markers+lines",
                 name=compound,
-                marker=dict(color=COMPOUND_COLORS.get(compound, "#FFFFFF"), size=6),
+                marker=dict(color=COMPOUND_COLORS.get(compound, "#FFFFFF"), size=5),
                 line=dict(color=COMPOUND_COLORS.get(compound, "#FFFFFF"), width=1.8),
             )
         )
@@ -333,7 +320,7 @@ def plot_strategy_comparison(best_by_stops: pd.DataFrame) -> go.Figure:
                 text=[f"+{v:.2f}s" for v in df["DeltaToBest_s"]],
                 textposition="outside",
                 marker_color=bar_colors,
-                width=0.48,
+                width=0.45,
             )
         ]
     )
@@ -349,16 +336,17 @@ def plot_strategy_comparison(best_by_stops: pd.DataFrame) -> go.Figure:
 
 
 def plot_pit_window_heatmap(window_df: pd.DataFrame, compounds: list[str]) -> go.Figure:
-    """Plot a 1D or 2D heatmap showing time penalty across pit-stop lap combinations."""
+    """Lightweight go.Heatmap/go.Bar pit window visualization."""
     if len(compounds) == 2:
-        fig = px.bar(
-            window_df,
-            x="PitLap1",
-            y="Delta_s",
-            color="Delta_s",
-            color_continuous_scale="Tealgrn",
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=window_df["PitLap1"],
+                    y=window_df["Delta_s"],
+                    marker_color="#38BDF8",
+                )
+            ]
         )
-        fig.update_coloraxes(showscale=False)
         return style_plotly_figure(
             fig,
             title=f"Pit Window Sensitivity ({' → '.join(compounds)})",
@@ -367,11 +355,14 @@ def plot_pit_window_heatmap(window_df: pd.DataFrame, compounds: list[str]) -> go
         )
 
     pivot = window_df.pivot(index="PitLap1", columns="PitLap2", values="Delta_s")
-    fig = px.imshow(
-        pivot,
-        color_continuous_scale=[[0.0, "#10B981"], [0.45, "#F59E0B"], [1.0, "#EF4444"]],
-        aspect="auto",
-        labels=dict(x="Second Pit Lap", y="First Pit Lap", color="Delta (s)"),
+    fig = go.Figure(
+        data=go.Heatmap(
+            z=pivot.values,
+            x=pivot.columns.tolist(),
+            y=pivot.index.tolist(),
+            colorscale=[[0.0, "#10B981"], [0.45, "#F59E0B"], [1.0, "#EF4444"]],
+            colorbar=dict(title="Delta (s)"),
+        )
     )
     return style_plotly_figure(
         fig,
@@ -503,7 +494,6 @@ def main() -> None:
     )
 
     if best_result.sc_recommendations:
-        st.markdown('<div class="section-spacer"></div>', unsafe_allow_html=True)
         for rec in best_result.sc_recommendations:
             st.info(
                 f"🚨 **{rec['track_status']} Deployed on Lap {rec['lap']}** → "
@@ -512,30 +502,41 @@ def main() -> None:
 
     st.divider()
 
-    # --- Row 1 Charts: Tyre Degradation & Lap-by-Lap Pace ---
-    col_left, col_right = st.columns(2, gap="large")
-    with col_left:
-        st.plotly_chart(
-            plot_tyre_degradation(tyre_model, max_age=total_laps // 2 + 5),
-            use_container_width=True,
-        )
-    with col_right:
-        st.plotly_chart(
-            plot_lap_time_trace(best_result.lap_history, best_result.strategy_name),
-            use_container_width=True,
-        )
+    # --- Tabbed Charts (cuts initial JS paint cost in half) ---
+    tab1, tab2 = st.tabs(["📈 Pace & Tyre Degradation", "🔥 Strategy Comparison & Pit Windows"])
 
-    st.markdown('<div class="section-spacer"></div>', unsafe_allow_html=True)
+    with tab1:
+        col_left, col_right = st.columns(2, gap="large")
+        with col_left:
+            st.plotly_chart(
+                plot_tyre_degradation(tyre_model, max_age=total_laps // 2 + 5),
+                use_container_width=True,
+                config=PLOTLY_CONFIG,
+            )
+        with col_right:
+            st.plotly_chart(
+                plot_lap_time_trace(best_result.lap_history, best_result.strategy_name),
+                use_container_width=True,
+                config=PLOTLY_CONFIG,
+            )
 
-    # --- Row 2 Charts: Strategy Comparison & Pit-Window Heatmap ---
-    col_left2, col_right2 = st.columns(2, gap="large")
-    with col_left2:
-        st.plotly_chart(plot_strategy_comparison(best_by_stops), use_container_width=True)
-    with col_right2:
-        if len(best_compounds) in {2, 3}:
-            st.plotly_chart(plot_pit_window_heatmap(window_df, best_compounds), use_container_width=True)
-        else:
-            st.info("Pit-window heatmap is displayed for 1-stop and 2-stop strategies.")
+    with tab2:
+        col_left2, col_right2 = st.columns(2, gap="large")
+        with col_left2:
+            st.plotly_chart(
+                plot_strategy_comparison(best_by_stops),
+                use_container_width=True,
+                config=PLOTLY_CONFIG,
+            )
+        with col_right2:
+            if len(best_compounds) in {2, 3}:
+                st.plotly_chart(
+                    plot_pit_window_heatmap(window_df, best_compounds),
+                    use_container_width=True,
+                    config=PLOTLY_CONFIG,
+                )
+            else:
+                st.info("Pit-window heatmap is displayed for 1-stop and 2-stop strategies.")
 
     st.divider()
 
@@ -590,25 +591,26 @@ def main() -> None:
         with mc_col1:
             st.dataframe(mc_out.summary_df, use_container_width=True, hide_index=True)
         with mc_col2:
-            fig_mc = px.bar(
-                mc_out.summary_df,
-                x="WinProb_%",
-                y="Strategy",
-                orientation="h",
-                text="WinProb_%",
-                color="WinProb_%",
-                color_continuous_scale="Viridis",
+            fig_mc = go.Figure(
+                data=[
+                    go.Bar(
+                        x=mc_out.summary_df["WinProb_%"],
+                        y=mc_out.summary_df["Strategy"],
+                        orientation="h",
+                        text=[f"{v:.1f}%" for v in mc_out.summary_df["WinProb_%"]],
+                        textposition="outside",
+                        marker_color="#E10600",
+                    )
+                ]
             )
-            fig_mc.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
-            fig_mc.update_coloraxes(showscale=False)
             fig_mc = style_plotly_figure(
                 fig_mc,
                 title="Win Probability by Strategy (%)",
                 x_title="Win Probability (%)",
                 y_title="",
             )
-            fig_mc.update_layout(height=340)
-            st.plotly_chart(fig_mc, use_container_width=True)
+            fig_mc.update_layout(height=320)
+            st.plotly_chart(fig_mc, use_container_width=True, config=PLOTLY_CONFIG)
 
 
 if __name__ == "__main__":
