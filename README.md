@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/header_banner.svg" alt="PitWall AI Header" width="100%"/>
+<img src="https://raw.githubusercontent.com/Kanak0091/pitwall-ai/main/assets/header_banner.svg" alt="PitWall AI Header" width="100%"/>
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-Telemetry%20UI-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/) [![scikit-learn](https://img.shields.io/badge/scikit--learn-Degradation%20ML-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/) [![FastF1](https://img.shields.io/badge/Telemetry-FastF1-E10600?style=for-the-badge)](https://docs.fastf1.dev/) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/) [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 
@@ -81,7 +81,7 @@ pitwall-ai/
 ## 🚀 Installation & Quickstart
 
 ```bash
-git clone [https://github.com/Kanak0091/pitwall-ai.git](https://github.com/Kanak0091/pitwall-ai.git)
+git clone https://github.com/Kanak0091/pitwall-ai.git
 cd pitwall-ai
 python3 -m venv .venv
 source .venv/bin/activate
@@ -121,6 +121,6 @@ GitHub: [@Kanak0091](https://github.com/Kanak0091)
 
 <div align="center">
 
-<img src="assets/footer_banner.svg" alt="PitWall AI Footer" width="100%"/>
+<img src="https://raw.githubusercontent.com/Kanak0091/pitwall-ai/main/assets/footer_banner.svg" alt="PitWall AI Footer" width="100%"/>
 
 </div>
