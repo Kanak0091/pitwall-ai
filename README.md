@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0B0E14,50:990000,100:E10600&height=210§ion=header&text=PITWALL%20AI&fontSize=56&fontColor=F8FAFC&animation=fadeIn&fontAlignY=38&desc=Formula%201%20Race%20Strategy%20%26%20Monte%20Carlo%20Simulator&descAlignY=62&descSize=18" width="100%" alt="PitWall AI Header"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0B0E14,50:990000,100:E10600&height=200§ion=header&text=PITWALL%20AI&fontSize=54&fontColor=F8FAFC&fontAlignY=38&desc=Formula%201%20Race%20Strategy%20Simulator&descAlignY=62&descSize=18" width="100%" alt="PitWall AI Header"/>
 
 <a href="https://github.com/Kanak0091/pitwall-ai"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=16&duration=2800&pause=800&color=E10600¢er=true&vCenter=true&width=850&lines=BOX+BOX+%E2%80%A2+Fuel-Corrected+Tyre+Degradation+ML;Dynamic+Weather+%26+Safety+Car+Pit-Window+Optimizer;1%2C000%2B+Paired+Monte+Carlo+Race+Simulations" alt="PitWall Telemetry Ticker" /></a>
 
