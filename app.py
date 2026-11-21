@@ -23,7 +23,7 @@ st.set_page_config(
     page_title="PitWall AI | F1 Race Strategy Simulator",
     page_icon="🏎️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # --- F1 Pit-Wall Telemetry Color Palette ---
@@ -43,16 +43,16 @@ COMPOUND_COLORS = {
 
 
 def inject_custom_css() -> None:
-    """Apply F1 telemetry styling, custom KPI cards, and clean layout spacing."""
+    """Apply responsive F1 telemetry styling and auto-wrapping KPI cards."""
     st.markdown(
         f"""
         <style>
-        /* Main container spacing */
+        /* Responsive container padding */
         .block-container {{
-            padding-top: 2rem;
-            padding-bottom: 3rem;
-            padding-left: 2.5rem;
-            padding-right: 2.5rem;
+            padding-top: 1.5rem;
+            padding-bottom: 2.5rem;
+            padding-left: clamp(1rem, 3vw, 2.5rem);
+            padding-right: clamp(1rem, 3vw, 2.5rem);
             max-width: 1440px;
         }}
 
@@ -61,11 +61,6 @@ def inject_custom_css() -> None:
             background-color: {BG_CARD};
             border-right: 1px solid {BORDER_SUBTLE};
         }}
-        section[data-testid="stSidebar"] .block-container {{
-            padding-top: 1.5rem;
-            padding-left: 1.25rem;
-            padding-right: 1.25rem;
-        }}
 
         /* Header Banner */
         .pitwall-banner {{
@@ -73,58 +68,60 @@ def inject_custom_css() -> None:
             border: 1px solid {BORDER_SUBTLE};
             border-left: 5px solid {F1_RED};
             border-radius: 12px;
-            padding: 1.35rem 1.75rem;
-            margin-bottom: 1.75rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
         }}
         .pitwall-title {{
-            font-size: 1.85rem;
+            font-size: clamp(1.35rem, 2.5vw, 1.85rem);
             font-weight: 800;
             letter-spacing: -0.02em;
             color: #F8FAFC;
             margin: 0;
+            line-height: 1.25;
         }}
         .pitwall-subtitle {{
             color: {TEXT_MUTED};
-            font-size: 0.95rem;
-            margin-top: 0.35rem;
+            font-size: 0.92rem;
+            margin-top: 0.4rem;
             margin-bottom: 0;
+            line-height: 1.45;
         }}
 
-        /* Custom Strategy KPI Cards (prevents text truncation) */
+        /* Responsive Auto-Fit Grid for KPI Cards (prevents narrow squishing) */
+        .kpi-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }}
         .kpi-card {{
             background-color: {BG_CARD};
             border: 1px solid {BORDER_SUBTLE};
             border-radius: 12px;
-            padding: 1.15rem 1.25rem;
-            height: 100%;
+            padding: 1.1rem 1.25rem;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            min-width: 0;
         }}
-        .kpi-card.accent-red {{
-            border-top: 3px solid {F1_RED};
-        }}
-        .kpi-card.accent-gold {{
-            border-top: 3px solid #FFD60A;
-        }}
-        .kpi-card.accent-cyan {{
-            border-top: 3px solid #38BDF8;
-        }}
-        .kpi-card.accent-green {{
-            border-top: 3px solid #32D74B;
-        }}
+        .kpi-card.accent-red {{ border-top: 3px solid {F1_RED}; }}
+        .kpi-card.accent-gold {{ border-top: 3px solid #FFD60A; }}
+        .kpi-card.accent-cyan {{ border-top: 3px solid #38BDF8; }}
+        .kpi-card.accent-green {{ border-top: 3px solid #32D74B; }}
+
         .kpi-label {{
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             color: {TEXT_MUTED};
             font-weight: 600;
             margin-bottom: 0.45rem;
+            white-space: nowrap;
         }}
         .kpi-value {{
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #F8FAFC;
-            line-height: 1.3;
-            word-break: break-word;
+            line-height: 1.35;
         }}
         .kpi-sub {{
             font-size: 0.8rem;
@@ -134,13 +131,13 @@ def inject_custom_css() -> None:
 
         /* Section spacing */
         .section-spacer {{
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
         }}
         hr {{
             border-color: {BORDER_SUBTLE};
-            margin-top: 1.75rem;
-            margin-bottom: 1.75rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }}
         </style>
         """,
@@ -149,16 +146,16 @@ def inject_custom_css() -> None:
 
 
 def render_compound_badges(compounds: list[str]) -> str:
-    """Render colored Pirelli tyre pills for the strategy card."""
+    """Render colored Pirelli tyre pills that wrap cleanly on smaller screens."""
     badges = []
     for comp in compounds:
         color = COMPOUND_COLORS.get(comp.upper(), "#E2E8F0")
         badges.append(
-            f'<span style="display:inline-block; padding:2px 9px; margin:2px 3px 2px 0; '
-            f'border-radius:999px; font-size:0.82rem; font-weight:700; '
+            f'<span style="display:inline-block; padding:2px 9px; margin:2px 0; '
+            f'border-radius:999px; font-size:0.78rem; font-weight:700; white-space:nowrap; '
             f'color:#0B0E14; background-color:{color};">{comp}</span>'
         )
-    return " → ".join(badges)
+    return ' <span style="color:#94A3B8; font-weight:700;">→</span> '.join(badges)
 
 
 @st.cache_data(show_spinner=False)
@@ -168,6 +165,61 @@ def get_cleaned_laps(year: int, grand_prix: str, use_offline_synthetic: bool) ->
         from src.data_loader import generate_synthetic_race_data
         return generate_synthetic_race_data()
     return load_race_laps(year=year, grand_prix=grand_prix, use_fallback=True)
+
+
+@st.cache_data(show_spinner=False)
+def run_cached_optimization(
+    year: int,
+    grand_prix: str,
+    use_offline: bool,
+    model_type: str,
+    total_laps: int,
+    base_pit_loss: float,
+    starting_tyre: str,
+    initial_weather: str,
+    rain_prob: float,
+    sc_prob: float,
+    forced_sc_lap: int | None,
+):
+    """Cache tyre model fitting, simulation, and strategy optimization for fast UI responsiveness."""
+    laps_df = get_cleaned_laps(year, grand_prix, use_offline)
+    tyre_model = TyreDegradationModel(model_type=model_type).fit(laps_df)
+
+    weather_timeline = build_weather_timeline(
+        total_laps=total_laps,
+        initial_condition=initial_weather,
+        dynamic=rain_prob > 0.0,
+        rain_probability=rain_prob,
+        seed=42,
+    )
+    sc_schedule = generate_safety_car_schedule(
+        total_laps=total_laps,
+        sc_probability=sc_prob,
+        forced_sc_lap=forced_sc_lap,
+        seed=42,
+    )
+
+    simulator = RaceSimulator(
+        tyre_model=tyre_model,
+        total_laps=total_laps,
+        base_pit_loss=base_pit_loss,
+    )
+    optimizer = StrategyOptimizer(simulator=simulator, min_stint_laps=6, step_size=2)
+
+    start_filter = None if starting_tyre == "Any" else starting_tyre
+    ranked_df, best_result = optimizer.optimize(
+        starting_compound=start_filter,
+        weather_timeline=weather_timeline,
+        sc_schedule=sc_schedule,
+    )
+    best_by_stops = optimizer.best_per_stop_count(ranked_df)
+    best_compounds = ranked_df.iloc[0]["Compounds"].split(" -> ")
+    window_df, pit_windows = optimizer.compute_pit_window_heatmap(
+        compounds=best_compounds[:3],
+        weather_timeline=weather_timeline,
+        sc_schedule=sc_schedule,
+    )
+    return tyre_model, simulator, ranked_df, best_result, best_by_stops, window_df, pit_windows
 
 
 def format_race_time(seconds: float) -> str:
@@ -181,14 +233,14 @@ def format_race_time(seconds: float) -> str:
 def style_plotly_figure(fig: go.Figure, title: str, x_title: str, y_title: str) -> go.Figure:
     """Apply consistent PitWall dark telemetry styling and clean margins to Plotly charts."""
     fig.update_layout(
-        title=dict(text=title, font=dict(size=15, color="#F8FAFC"), x=0.02, y=0.95),
+        title=dict(text=title, font=dict(size=14, color="#F8FAFC"), x=0.02, y=0.95),
         xaxis_title=x_title,
         yaxis_title=y_title,
         paper_bgcolor=BG_CARD,
         plot_bgcolor="#0E121B",
         font=dict(color="#CBD5E1", size=12),
-        height=390,
-        margin=dict(l=55, r=25, t=65, b=50),
+        height=370,
+        margin=dict(l=50, r=20, t=65, b=48),
         xaxis=dict(gridcolor="#1E2533", zerolinecolor="#1E2533"),
         yaxis=dict(gridcolor="#1E2533", zerolinecolor="#1E2533"),
         legend=dict(
@@ -388,101 +440,67 @@ def main() -> None:
     st.sidebar.markdown("### 🎲 Monte Carlo Settings")
     mc_runs = st.sidebar.select_slider("Monte Carlo Simulations", options=[200, 500, 1000, 2000], value=1000)
 
-    # --- Load Data & Fit Tyre Model ---
-    with st.spinner("Loading race telemetry & training tyre degradation model..."):
-        laps_df = get_cleaned_laps(year, grand_prix, use_offline)
-        tyre_model = TyreDegradationModel(model_type=model_type).fit(laps_df)
-
-    # --- Build Weather & Safety Car Scenario ---
-    weather_timeline = build_weather_timeline(
-        total_laps=total_laps,
-        initial_condition=initial_weather,
-        dynamic=rain_prob > 0.0,
-        rain_probability=rain_prob,
-        seed=42,
-    )
-    sc_schedule = generate_safety_car_schedule(
-        total_laps=total_laps,
-        sc_probability=sc_prob,
-        forced_sc_lap=forced_sc_lap,
-        seed=42,
-    )
-
-    simulator = RaceSimulator(
-        tyre_model=tyre_model,
+    # --- Cached Optimization & Simulation ---
+    (
+        tyre_model,
+        simulator,
+        ranked_df,
+        best_result,
+        best_by_stops,
+        window_df,
+        pit_windows,
+    ) = run_cached_optimization(
+        year=year,
+        grand_prix=grand_prix,
+        use_offline=use_offline,
+        model_type=model_type,
         total_laps=total_laps,
         base_pit_loss=base_pit_loss,
+        starting_tyre=starting_tyre,
+        initial_weather=initial_weather,
+        rain_prob=rain_prob,
+        sc_prob=sc_prob,
+        forced_sc_lap=forced_sc_lap,
     )
-    optimizer = StrategyOptimizer(simulator=simulator, min_stint_laps=6, step_size=2)
 
-    start_filter = None if starting_tyre == "Any" else starting_tyre
-    ranked_df, best_result = optimizer.optimize(
-        starting_compound=start_filter,
-        weather_timeline=weather_timeline,
-        sc_schedule=sc_schedule,
-    )
-    best_by_stops = optimizer.best_per_stop_count(ranked_df)
-
-    # --- Recommended Strategy Custom KPI Cards ---
+    # --- Recommended Strategy Responsive KPI Grid ---
     st.markdown("### 🏆 Recommended Race Strategy")
     runner_up_delta = float(ranked_df.iloc[1]["DeltaToBest_s"]) if len(ranked_df) > 1 else 0.0
     best_compounds = ranked_df.iloc[0]["Compounds"].split(" -> ")
     best_pit_laps = ranked_df.iloc[0]["PlannedPitLaps"]
 
-    window_df, pit_windows = optimizer.compute_pit_window_heatmap(
-        compounds=best_compounds[:3],
-        weather_timeline=weather_timeline,
-        sc_schedule=sc_schedule,
-    )
     window_str = " & ".join([f"Laps {w[0]}–{w[1]}" for w in pit_windows])
     exact_pit_str = ", ".join([f"Lap {p}" for p in best_pit_laps])
     badges_html = render_compound_badges(best_compounds)
+    runner_up_name = ranked_df.iloc[1]["Compounds"] if len(ranked_df) > 1 else "N/A"
 
-    c1, c2, c3, c4 = st.columns(4, gap="medium")
-    with c1:
-        st.markdown(
-            f"""
+    st.markdown(
+        f"""
+        <div class="kpi-grid">
             <div class="kpi-card accent-red">
                 <div class="kpi-label">Optimal Tyre Sequence</div>
-                <div class="kpi-value" style="font-size:1.05rem;">{badges_html}</div>
+                <div class="kpi-value" style="font-size:1rem;">{badges_html}</div>
                 <div class="kpi-sub">{len(best_pit_laps)}-Stop Strategy</div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with c2:
-        st.markdown(
-            f"""
             <div class="kpi-card accent-gold">
                 <div class="kpi-label">Optimal Pit Window</div>
                 <div class="kpi-value">{window_str}</div>
                 <div class="kpi-sub">Target Box: {exact_pit_str}</div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with c3:
-        st.markdown(
-            f"""
             <div class="kpi-card accent-cyan">
                 <div class="kpi-label">Predicted Race Time</div>
                 <div class="kpi-value">{format_race_time(best_result.total_time_s)}</div>
                 <div class="kpi-sub">{total_laps} Laps Total Distance</div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with c4:
-        st.markdown(
-            f"""
             <div class="kpi-card accent-green">
                 <div class="kpi-label">Advantage Over #2</div>
                 <div class="kpi-value">+{runner_up_delta:.2f} s</div>
-                <div class="kpi-sub">vs {ranked_df.iloc[1]['Compounds'] if len(ranked_df) > 1 else 'N/A'}</div>
+                <div class="kpi-sub">vs {runner_up_name}</div>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     if best_result.sc_recommendations:
         st.markdown('<div class="section-spacer"></div>', unsafe_allow_html=True)
