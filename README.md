@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Kanak0091/pitwall-ai/main/assets/header_banner.svg" alt="PitWall AI Header" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0B0E14,50:990000,100:E10600&height=210§ion=header&text=PITWALL%20AI&fontSize=56&fontColor=F8FAFC&animation=fadeIn&fontAlignY=38&desc=Formula%201%20Race%20Strategy%20%26%20Monte%20Carlo%20Simulator&descAlignY=62&descSize=18" width="100%" alt="PitWall AI Header"/>
+
+<a href="https://github.com/Kanak0091/pitwall-ai"><img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=16&duration=2800&pause=800&color=E10600¢er=true&vCenter=true&width=850&lines=BOX+BOX+%E2%80%A2+Fuel-Corrected+Tyre+Degradation+ML;Dynamic+Weather+%26+Safety+Car+Pit-Window+Optimizer;1%2C000%2B+Paired+Monte+Carlo+Race+Simulations" alt="PitWall Telemetry Ticker" /></a>
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-Telemetry%20UI-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/) [![scikit-learn](https://img.shields.io/badge/scikit--learn-Degradation%20ML-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/) [![FastF1](https://img.shields.io/badge/Telemetry-FastF1-E10600?style=for-the-badge)](https://docs.fastf1.dev/) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/) [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 
@@ -121,6 +123,6 @@ GitHub: [@Kanak0091](https://github.com/Kanak0091)
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Kanak0091/pitwall-ai/main/assets/footer_banner.svg" alt="PitWall AI Footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:E10600,50:990000,100:0B0E14&height=120§ion=footer&text=BOX%20BOX%20%E2%80%A2%20Kanak%20Sachin%20Chaudhary&fontSize=20&fontColor=F8FAFC&fontAlignY=68" width="100%" alt="PitWall AI Footer"/>
 
 </div>
